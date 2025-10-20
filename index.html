@@ -722,7 +722,7 @@
     const db = firebase.firestore();
     
     // Lista global de colecciones de registro
-    let registroCollections = [{ id: 'registros', nombre: 'Bar Principal' }];
+    let registroCollections = [{ id: 'registros', nombre: 'Evento1' }];
     let currentRegistroCollection = 'registros'; // Colección activa por defecto
 
     // CONTROL DE INTRO (ocultar después)
@@ -785,7 +785,7 @@
             const eventos = snapshot.docs.map(doc => ({ id: doc.id, nombre: doc.data().nombre || doc.id }));
             
             // La colección 'registros' es la base (Bar Principal)
-            registroCollections = [{ id: 'registros', nombre: 'Bar Principal' }];
+            registroCollections = [{ id: 'registros', nombre: 'Evento1' }];
             
             // Agregar las colecciones de eventos
             eventos.forEach((ev) => {
@@ -943,7 +943,7 @@
         selector.innerHTML = "";
         
         // Agregar la opción principal
-        selector.innerHTML += `<option value="registros">Registro Principal (Bar)</option>`;
+        selector.innerHTML += `<option value="registros">Evento 1</option>`;
 
         // Agregar los eventos cargados
         registroCollections.filter(c => c.id !== 'registros').forEach(col => {
