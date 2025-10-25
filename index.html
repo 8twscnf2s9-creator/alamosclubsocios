@@ -594,11 +594,19 @@
           </td>
         </tr>
         <tr>
-          <td>Cerveza ($40)</td>
+          <td>Promo Cerveza ($80)</td>
           <td>
             <button onclick="modificar('cerveza', -1)">−</button>
             <span id="cervezaCount">0</span>
             <button onclick="modificar('cerveza', 1)">+</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Cerveza ($45)</td>
+          <td>
+            <button onclick="modificar('ucerveza', -1)">−</button>
+            <span id="ucervezaCount">0</span>
+            <button onclick="modificar('ucerveza', 1)">+</button>
           </td>
         </tr>
         <tr>
@@ -831,7 +839,7 @@
 
     // ---------------------------------------------------------------------
     // PANEL DE VENTAS (empleado) - sin cambios lógicos
-    let promo = 0, unidad = 0, cerveza = 0;
+    let promo = 0, unidad = 0, cerveza = 0, ucerveza = 0;
     function mostrarVentas() {
       document.getElementById("menuPrincipal").style.display = "none";
       document.getElementById("ventasPanel").style.display = "block";
@@ -840,17 +848,19 @@
       if (tipo === "promo") promo = Math.max(0, promo + valor);
       if (tipo === "unidad") unidad = Math.max(0, unidad + valor);
       if (tipo === "cerveza") cerveza = Math.max(0, cerveza + valor);
+      if (tipo === "ucerveza") ucerveza = Math.max(0, ucerveza + valor);
       actualizarTotal();
     }
     function actualizarTotal() {
-      const total = promo * 250 + unidad * 150 + cerveza * 40;
+      const total = promo * 250 + unidad * 150 + cerveza * 80 + ucerveza * 45;
       document.getElementById("promoCount").textContent = promo;
       document.getElementById("unidadCount").textContent = unidad;
       document.getElementById("cervezaCount").textContent = cerveza;
+      document.getElementById("ucervezaCount").textContent = ucerveza;
       document.getElementById("total").textContent = "$" + total;
     }
     async function pagar() {
-      const total = promo * 250 + unidad * 150 + cerveza * 40;
+      const total = promo * 250 + unidad * 150 + cerveza * 80 + ucerveza * 45;
       if (total === 0) {
         alert("⚠️ No hay productos en la venta");
         return;
@@ -861,10 +871,11 @@
           promociones: promo,
           unidades: unidad,
           cervezas: cerveza,
+          ucervezas: ucerveza, 
           total: total
         });
         alert("✅ Venta registrada correctamente.");
-        promo = 0; unidad = 0; cerveza = 0;
+        promo = 0; unidad = 0; cerveza = 0; ucerveza = 0;
         actualizarTotal();
       } catch (e) {
         alert("❌ Error al registrar venta: " + e.message);
@@ -1382,7 +1393,8 @@
             const agrupado = {
                 'Promoción ($250)': { cantidad: 0, total: 0, precioUnidad: 250 },
                 'Unidad ($150)': { cantidad: 0, total: 0, precioUnidad: 150 },
-                'Cerveza ($40)': { cantidad: 0, total: 0, precioUnidad: 40 }
+                'Cerveza ($80)': { cantidad: 0, total: 0, precioUnidad: 80 },
+                'UCerveza ($45)': { cantidad: 0, total: 0, precioUnidad: 45 },
             };
 
             let totalVentasGeneral = 0;
@@ -1391,6 +1403,7 @@
                 const promociones = parseInt(v.promociones) || 0;
                 const unidades = parseInt(v.unidades) || 0;
                 const cervezas = parseInt(v.cervezas) || 0;
+                const ucervezas = parseInt(v.ucervezas) || 0;
                 const totalVenta = parseFloat(v.total) || 0;
                 
                 agrupado['Promoción ($250)'].cantidad += promociones;
@@ -1399,13 +1412,16 @@
                 agrupado['Unidad ($150)'].cantidad += unidades;
                 agrupado['Unidad ($150)'].total += (unidades * agrupado['Unidad ($150)'].precioUnidad);
 
-                agrupado['Cerveza ($40)'].cantidad += cervezas;
-                agrupado['Cerveza ($40)'].total += (cervezas * agrupado['Cerveza ($40)'].precioUnidad);
+                agrupado['Cerveza ($80)'].cantidad += cervezas;
+                agrupado['Cerveza ($80)'].total += (cervezas * agrupado['Cerveza ($80)'].precioUnidad);
+                
+                agrupado['UCerveza ($45)'].cantidad += ucervezas;
+                agrupado['UCerveza ($45)'].total += (ucervezas * agrupado['UCerveza ($45)'].precioUnidad);
                 
                 totalVentasGeneral += totalVenta;
             });
             
-            let htmlAgrupado = '<table class="ventasVisualTable"><thead><tr><th>Promoción, Unidad , Cerveza</th><th>Cantidad Total</th><th>Total Compra Estimado</th></tr></thead><tbody>';
+            let htmlAgrupado = '<table class="ventasVisualTable"><thead><tr><th>Promoción, Unidad , Cerveza, UCerveza</th><th>Cantidad Total</th><th>Total Compra Estimado</th></tr></thead><tbody>';
 
             if (agrupado['Promoción ($250)'].cantidad > 0) {
                 htmlAgrupado += `<tr><td>${escapeHtml('Promoción ($250)')}</td><td>${agrupado['Promoción ($250)'].cantidad}</td><td>$${formatNumber(agrupado['Promoción ($250)'].total)}</td></tr>`;
@@ -1413,8 +1429,11 @@
             if (agrupado['Unidad ($150)'].cantidad > 0) {
                  htmlAgrupado += `<tr><td>${escapeHtml('Unidad ($150)')}</td><td>${agrupado['Unidad ($150)'].cantidad}</td><td>$${formatNumber(agrupado['Unidad ($150)'].total)}</td></tr>`;
             }
-             if (agrupado['Cerveza ($40)'].cantidad > 0) {
-                 htmlAgrupado += `<tr><td>${escapeHtml('Cerveza ($40)')}</td><td>${agrupado['Cerveza ($40)'].cantidad}</td><td>$${formatNumber(agrupado['Cerveza ($40)'].total)}</td></tr>`;
+             if (agrupado['Cerveza ($80)'].cantidad > 0) {
+                 htmlAgrupado += `<tr><td>${escapeHtml('Cerveza ($80)')}</td><td>${agrupado['Cerveza ($80)'].cantidad}</td><td>$${formatNumber(agrupado['Cerveza ($80)'].total)}</td></tr>`;
+            }
+            if (agrupado['UCerveza ($45)'].cantidad > 0) {
+                 htmlAgrupado += `<tr><td>${escapeHtml('UCerveza ($45)')}</td><td>${agrupado['UCerveza ($45)'].cantidad}</td><td>$${formatNumber(agrupado['UCerveza ($45)'].total)}</td></tr>`;
             }
             htmlAgrupado += '</tbody></table>';
             
